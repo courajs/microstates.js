@@ -1,50 +1,18 @@
 {
-  "name": "microstates",
-  "version": "0.9.1",
+  "name": "microstates-monorepo",
+  "version": "0.0.0-monorepo",
   "description": "Composable State Primitives for JavaScript",
-  "keywords": [
-    "lens",
-    "state-machine",
-    "immutable",
-    "composable",
-    "models",
-    "state"
-  ],
-  "homepage": "https://github.com/microstates/microstates.js#readme",
-  "bugs": {
-    "url": "https://github.com/microstates/microstates.js/issues"
+  "author": "Frontside Engineering <engineering@frontside.com>",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
-  "license": "MIT",
-  "author": "Charles Lowell <charles@frontside.io>, Taras Mankovski <taras@frontside.io>",
-  "files": [
-    "src",
-    "README.md"
-  ],
-  "main": "dist/microstates.cjs.js",
-  "module": "dist/microstates.es.js",
-  "repository": "git+ssh://git@github.com/microstates/microstates.js.git",
   "scripts": {
-    "test": "mocha --recursive -r tests/setup tests",
-    "build": "rollup -c",
-    "prepare": "npm run build",
-    "prerelease": "npm test && npm run build"
-  },
-  "devDependencies": {
-    "@babel/core": "7.0.0-beta.54",
-    "@babel/plugin-proposal-class-properties": "7.0.0-beta.54",
-    "@babel/preset-env": "^7.0.0-beta.54",
-    "@babel/register": "^7.0.0-beta.54",
-    "expect": "^23.4.0",
-    "mocha": "^5.2.0",
-    "object.getownpropertydescriptors": "^2.0.3",
-    "rollup": "^0.63.4",
-    "rollup-plugin-babel": "4.0.0-beta.7",
-    "rollup-plugin-filesize": "4.0.1",
-    "rollup-plugin-node-resolve": "3.3.0",
-    "rxjs": "^6.2.1"
-  },
-  "dependencies": {
-    "funcadelic": "^0.5.0",
-    "symbol-observable": "^1.2.0"
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint",
+    "coverage": "yarn workspaces run coverage",
+    "coveralls": "yarn workspaces run coveralls"
   }
 }

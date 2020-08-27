@@ -1,0 +1,78 @@
+import { Any, ObjectType, ArrayType, BooleanType, NumberType, StringType } from './types';
+import Primitive from './types/primitive';
+
+class DSL {
+  constructor(rules = []) {
+    this.rules = rules;
+  }
+
+  expand(value) {
+    for (let rule of this.rules) {
+      let result = rule.call(this, value);
+      if (result && typeof result.Type === 'function') {
+        return result;
+      } else {
+        continue;
+      }
+    }
+    return { Type: Any, value };
+  }
+
+  use(rule) {
+    return new DSL(this.rules.concat(rule));
+  }
+}
+
+export default new DSL()
+  .use(function matchBuiltins(value) {
+    switch(value) {
+      case Object:
+        return { Type: ObjectType, value: {} };
+      case Array:
+        return { Type: ArrayType, value: [] };
+      case Boolean:
+        return { Type: BooleanType, value: false };
+      case Number:
+        return { Type: NumberType, value: 0 };
+    }
+    // TIL switch doesn't work on String ¯\_(ツ)_/¯
+    if (value === String) {
+      return { Type: StringType, value: '' };
+    }
+
+  })
+  .use(function matchArrays(value) {
+    if (Array.isArray(value) && value.length < 2) {
+      let [ T ] = value;
+      let Type = T != null ? ArrayType.of(this.expand(T).Type) : ArrayType;
+      return { Type, value: [] };
+    }
+  })
+  .use(function matchObjects(value) {
+    if (value != null && typeof value === 'object' && Object.keys(value).length < 2) {
+      let [ key ] = Object.keys(value);
+      if (key == null) {
+        return { Type: ObjectType, value: {} };
+      } else {
+        let { Type: childType } = this.expand(value[key]);
+        if (childType.isConstant) {
+          return undefined;
+        } else {
+          return {Type: ObjectType.of(childType), value: {} };
+        }
+      }
+    }
+  })
+  .use(function matchCustomTypes(value) {
+    if (typeof value === 'function') {
+      return { Type: value, value: undefined };
+    }
+  })
+  .use(function matchConstants(value) {
+    return { Type: Constant(value), value };
+  });
+
+const Constant = () => class Constant extends Primitive {
+  static isConstant = true;
+
+};

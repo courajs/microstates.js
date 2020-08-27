@@ -1,4 +1,0 @@
-{
-  "jest/globals": true,
-  "plugins": ["jest", "prefer-let"]
-}
